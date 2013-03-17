@@ -75,9 +75,23 @@ sub auth :Path('/hatena/auth'){
     my $cert = $c->req->param('cert');
     my $user = $api->login($cert) or die "Couldn't login: " . $api->errstr;
     print Dumper $user;
-    #$user->name;
+    if(defined($user->name) && $user->name ne ''){
+        $c->session->{name} = $user->name;
+        $c->session->{image_url} = $user->image_url;
+        $c->session->{thumbnail_url} = $user->thumbnail_url;
+        print Dumper $c->session;
+    }else{
+        $c->response->redirect("/");
+    }
     #$user->image_url;
     #$user->thumbnail_url;
+}
+
+sub logout :Local {
+    my ($self,$c) = @_;
+        print Dumper $c->session->{name};
+    $c->delete_session('logouted');
+    print Dumper $c->session->{name};
 }
 =head1 AUTHOR
 
